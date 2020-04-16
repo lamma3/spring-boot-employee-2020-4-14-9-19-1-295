@@ -82,4 +82,24 @@ public class CompanyControllerTest {
         Assert.assertEquals("Male", companies.get(0).getEmployees().get(0).getGender());
         Assert.assertEquals(4000, companies.get(0).getEmployees().get(0).getSalary().longValue());
     }
+
+    @Test
+    public void should_return_company_1_when_get_1() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .get("/companies/1");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        Company company = response.getBody().as(Company.class);
+
+        Assert.assertEquals(1, company.getId().longValue());
+        Assert.assertEquals("boot", company.getCompanyName());
+        Assert.assertEquals(2, company.getEmployeeNumber().longValue());
+        Assert.assertEquals(2, company.getEmployees().size());
+        Assert.assertEquals(13, company.getEmployees().get(0).getId().longValue());
+        Assert.assertEquals("boot1", company.getEmployees().get(0).getName());
+        Assert.assertEquals(16, company.getEmployees().get(0).getAge().longValue());
+        Assert.assertEquals("Male", company.getEmployees().get(0).getGender());
+        Assert.assertEquals(4000, company.getEmployees().get(0).getSalary().longValue());
+    }
 }
