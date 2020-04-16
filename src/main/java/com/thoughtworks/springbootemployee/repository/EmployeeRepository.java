@@ -38,11 +38,11 @@ public class EmployeeRepository {
                 .orElse(null);
     }
 
-    public void add(Employee employee) {
+    public void save(Employee employee) {
         employees.add(employee);
     }
 
-    public void remove(Employee employee) {
+    public void delete(Employee employee) {
         employees.remove(employee);
     }
 

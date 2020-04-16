@@ -26,13 +26,13 @@ public class EmployeeService {
     }
 
     public Employee create(Employee employee) {
-        employeeRepository.add(employee);
+        employeeRepository.save(employee);
         return employee;
     }
 
     public void delete(Integer employeeId) {
         Employee employee = employeeRepository.findById(employeeId);
-        employeeRepository.remove(employee);
+        employeeRepository.delete(employee);
     }
 
     public Employee update(Integer employeeId, Employee employeeUpdate) {

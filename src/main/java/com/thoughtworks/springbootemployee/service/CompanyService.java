@@ -28,7 +28,7 @@ public class CompanyService {
     }
 
     public Company create(Company company) {
-        companyRepository.add(company);
+        companyRepository.save(company);
         return company;
     }
 

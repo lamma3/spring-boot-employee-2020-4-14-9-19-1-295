@@ -44,7 +44,7 @@ public class CompanyRepository {
                 .orElse(null);
     }
 
-    public void add(Company company) {
+    public void save(Company company) {
         companies.add(company);
     }
 }
