@@ -50,4 +50,35 @@ public class EmployeeControllerTest {
         Assert.assertEquals("Male", employees.get(0).getGender());
         Assert.assertEquals(0, employees.get(0).getSalary().longValue());
     }
+
+    @Test
+    public void should_return_correct_employee_when_get_all_with_page() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .queryParam("page", 2)
+                .queryParam("pageSize", 3)
+                .get("/employees");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        List<Employee> employees = response.getBody().as(new TypeRef<List<Employee>>() {
+            @Override
+            public Type getType() {
+                return super.getType();
+            }
+        });
+
+        Assert.assertEquals(2, employees.size());
+
+        Assert.assertEquals(3, employees.get(0).getId().longValue());
+        Assert.assertEquals("Xiaogang", employees.get(0).getName());
+        Assert.assertEquals(16, employees.get(0).getAge().longValue());
+        Assert.assertEquals("Male", employees.get(0).getGender());
+        Assert.assertEquals(0, employees.get(0).getSalary().longValue());
+
+        Assert.assertEquals(4, employees.get(1).getId().longValue());
+        Assert.assertEquals("Xiaoxia", employees.get(1).getName());
+        Assert.assertEquals(15, employees.get(1).getAge().longValue());
+        Assert.assertEquals("Male", employees.get(1).getGender());
+        Assert.assertEquals(0, employees.get(1).getSalary().longValue());
+    }
 }
