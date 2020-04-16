@@ -125,4 +125,25 @@ public class CompanyControllerTest {
         Assert.assertEquals("Male", employees.get(0).getGender());
         Assert.assertEquals(4000, employees.get(0).getSalary().longValue());
     }
+
+    @Test
+    public void should_return_correct_company_when_create() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .body("{" +
+                        "\"id\": 10," +
+                        "\"companyName\": \"Test\"," +
+                        "\"employeeNumber\": 0," +
+                        "\"employees\": []" +
+                        "}")
+                .post("/companies");
+
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
+
+        Company company = response.getBody().as(Company.class);
+
+        Assert.assertEquals(10, company.getId().longValue());
+        Assert.assertEquals("Test", company.getCompanyName());
+        Assert.assertEquals(0, company.getEmployeeNumber().longValue());
+        Assert.assertEquals(0, company.getEmployees().size());
+    }
 }
