@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Type;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CompanyControllerTest {
 
     @Autowired
@@ -153,5 +155,28 @@ public class CompanyControllerTest {
                 .delete("/companies/1");
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+    }
+
+    @Test
+    public void should_return_correct_company_when_update() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .body("{" +
+                        "\"companyName\": \"New name\"" +
+                        "}")
+                .put("/companies/1");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        Company company = response.getBody().as(Company.class);
+
+        Assert.assertEquals(1, company.getId().longValue());
+        Assert.assertEquals("New name", company.getCompanyName());
+        Assert.assertEquals(2, company.getEmployeeNumber().longValue());
+        Assert.assertEquals(2, company.getEmployees().size());
+        Assert.assertEquals(13, company.getEmployees().get(0).getId().longValue());
+        Assert.assertEquals("boot1", company.getEmployees().get(0).getName());
+        Assert.assertEquals(16, company.getEmployees().get(0).getAge().longValue());
+        Assert.assertEquals("Male", company.getEmployees().get(0).getGender());
+        Assert.assertEquals(4000, company.getEmployees().get(0).getSalary().longValue());
     }
 }
