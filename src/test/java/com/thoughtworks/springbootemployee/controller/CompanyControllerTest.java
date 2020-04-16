@@ -1,9 +1,6 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.Company;
-import com.thoughtworks.springbootemployee.model.Employee;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.junit.Assert;
@@ -15,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -39,23 +33,16 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-        List<Company> companies = response.getBody().as(new TypeRef<List<Company>>() {
-            @Override
-            public Type getType() {
-                return super.getType();
-            }
-        });
-
-        Assert.assertEquals(2, companies.size());
-        Assert.assertEquals(0, companies.get(0).getId().longValue());
-        Assert.assertEquals("spring", companies.get(0).getCompanyName());
-        Assert.assertEquals(3, companies.get(0).getEmployeeNumber().longValue());
-        Assert.assertEquals(3, companies.get(0).getEmployees().size());
-        Assert.assertEquals(10, companies.get(0).getEmployees().get(0).getId().longValue());
-        Assert.assertEquals("spring1", companies.get(0).getEmployees().get(0).getName());
-        Assert.assertEquals(20, companies.get(0).getEmployees().get(0).getAge().longValue());
-        Assert.assertEquals("Male", companies.get(0).getEmployees().get(0).getGender());
-        Assert.assertEquals(1000, companies.get(0).getEmployees().get(0).getSalary().longValue());
+        Assert.assertEquals(2, response.jsonPath().getList("$").size());
+        Assert.assertEquals(0, response.jsonPath().getLong("[0].id"));
+        Assert.assertEquals("spring", response.jsonPath().get("[0].companyName"));
+        Assert.assertEquals(3, response.jsonPath().getLong("[0].employeeNumber"));
+        Assert.assertEquals(3, response.jsonPath().getList("[0].employees").size());
+        Assert.assertEquals(10, response.jsonPath().getLong("[0].employees[0].id"));
+        Assert.assertEquals("spring1", response.jsonPath().get("[0].employees[0].name"));
+        Assert.assertEquals(20, response.jsonPath().getLong("[0].employees[0].age"));
+        Assert.assertEquals("Male", response.jsonPath().get("[0].employees[0].gender"));
+        Assert.assertEquals(1000, response.jsonPath().getLong("[0].employees[0].salary"));
     }
 
     @Test
@@ -67,23 +54,16 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-        List<Company> companies = response.getBody().as(new TypeRef<List<Company>>() {
-            @Override
-            public Type getType() {
-                return super.getType();
-            }
-        });
-
-        Assert.assertEquals(1, companies.size());
-        Assert.assertEquals(1, companies.get(0).getId().longValue());
-        Assert.assertEquals("boot", companies.get(0).getCompanyName());
-        Assert.assertEquals(2, companies.get(0).getEmployeeNumber().longValue());
-        Assert.assertEquals(2, companies.get(0).getEmployees().size());
-        Assert.assertEquals(13, companies.get(0).getEmployees().get(0).getId().longValue());
-        Assert.assertEquals("boot1", companies.get(0).getEmployees().get(0).getName());
-        Assert.assertEquals(16, companies.get(0).getEmployees().get(0).getAge().longValue());
-        Assert.assertEquals("Male", companies.get(0).getEmployees().get(0).getGender());
-        Assert.assertEquals(4000, companies.get(0).getEmployees().get(0).getSalary().longValue());
+        Assert.assertEquals(1, response.jsonPath().getList("$").size());
+        Assert.assertEquals(1, response.jsonPath().getLong("[0].id"));
+        Assert.assertEquals("boot", response.jsonPath().get("[0].companyName"));
+        Assert.assertEquals(2, response.jsonPath().getLong("[0].employeeNumber"));
+        Assert.assertEquals(2, response.jsonPath().getList("[0].employees").size());
+        Assert.assertEquals(13, response.jsonPath().getLong("[0].employees[0].id"));
+        Assert.assertEquals("boot1", response.jsonPath().get("[0].employees[0].name"));
+        Assert.assertEquals(16, response.jsonPath().getLong("[0].employees[0].age"));
+        Assert.assertEquals("Male", response.jsonPath().get("[0].employees[0].gender"));
+        Assert.assertEquals(4000, response.jsonPath().getLong("[0].employees[0].salary"));
     }
 
     @Test
@@ -93,17 +73,15 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-        Company company = response.getBody().as(Company.class);
-
-        Assert.assertEquals(1, company.getId().longValue());
-        Assert.assertEquals("boot", company.getCompanyName());
-        Assert.assertEquals(2, company.getEmployeeNumber().longValue());
-        Assert.assertEquals(2, company.getEmployees().size());
-        Assert.assertEquals(13, company.getEmployees().get(0).getId().longValue());
-        Assert.assertEquals("boot1", company.getEmployees().get(0).getName());
-        Assert.assertEquals(16, company.getEmployees().get(0).getAge().longValue());
-        Assert.assertEquals("Male", company.getEmployees().get(0).getGender());
-        Assert.assertEquals(4000, company.getEmployees().get(0).getSalary().longValue());
+        Assert.assertEquals(1, response.jsonPath().getLong("id"));
+        Assert.assertEquals("boot", response.jsonPath().get("companyName"));
+        Assert.assertEquals(2, response.jsonPath().getLong("employeeNumber"));
+        Assert.assertEquals(2, response.jsonPath().getList("employees").size());
+        Assert.assertEquals(13, response.jsonPath().getLong("employees[0].id"));
+        Assert.assertEquals("boot1", response.jsonPath().get("employees[0].name"));
+        Assert.assertEquals(16, response.jsonPath().getLong("employees[0].age"));
+        Assert.assertEquals("Male", response.jsonPath().get("employees[0].gender"));
+        Assert.assertEquals(4000, response.jsonPath().getLong("employees[0].salary"));
     }
 
     @Test
@@ -113,19 +91,12 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-        List<Employee> employees = response.getBody().as(new TypeRef<List<Employee>>() {
-            @Override
-            public Type getType() {
-                return super.getType();
-            }
-        });
-
-        Assert.assertEquals(2, employees.size());
-        Assert.assertEquals(13, employees.get(0).getId().longValue());
-        Assert.assertEquals("boot1", employees.get(0).getName());
-        Assert.assertEquals(16, employees.get(0).getAge().longValue());
-        Assert.assertEquals("Male", employees.get(0).getGender());
-        Assert.assertEquals(4000, employees.get(0).getSalary().longValue());
+        Assert.assertEquals(2, response.jsonPath().getList("$").size());
+        Assert.assertEquals(13, response.jsonPath().getLong("[0].id"));
+        Assert.assertEquals("boot1", response.jsonPath().get("[0].name"));
+        Assert.assertEquals(16, response.jsonPath().getLong("[0].age"));
+        Assert.assertEquals("Male", response.jsonPath().get("[0].gender"));
+        Assert.assertEquals(4000, response.jsonPath().getLong("[0].salary"));
     }
 
     @Test
@@ -141,12 +112,10 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
 
-        Company company = response.getBody().as(Company.class);
-
-        Assert.assertEquals(10, company.getId().longValue());
-        Assert.assertEquals("Test", company.getCompanyName());
-        Assert.assertEquals(0, company.getEmployeeNumber().longValue());
-        Assert.assertEquals(0, company.getEmployees().size());
+        Assert.assertEquals(10, response.jsonPath().getLong("id"));
+        Assert.assertEquals("Test", response.jsonPath().get("companyName"));
+        Assert.assertEquals(0, response.jsonPath().getLong("employeeNumber"));
+        Assert.assertEquals(0, response.jsonPath().getList("employees").size());
     }
 
     @Test
@@ -167,16 +136,14 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-        Company company = response.getBody().as(Company.class);
-
-        Assert.assertEquals(1, company.getId().longValue());
-        Assert.assertEquals("New name", company.getCompanyName());
-        Assert.assertEquals(2, company.getEmployeeNumber().longValue());
-        Assert.assertEquals(2, company.getEmployees().size());
-        Assert.assertEquals(13, company.getEmployees().get(0).getId().longValue());
-        Assert.assertEquals("boot1", company.getEmployees().get(0).getName());
-        Assert.assertEquals(16, company.getEmployees().get(0).getAge().longValue());
-        Assert.assertEquals("Male", company.getEmployees().get(0).getGender());
-        Assert.assertEquals(4000, company.getEmployees().get(0).getSalary().longValue());
+        Assert.assertEquals(1, response.jsonPath().getLong("id"));
+        Assert.assertEquals("New name", response.jsonPath().get("companyName"));
+        Assert.assertEquals(2, response.jsonPath().getLong("employeeNumber"));
+        Assert.assertEquals(2, response.jsonPath().getList("employees").size());
+        Assert.assertEquals(13, response.jsonPath().getLong("employees[0].id"));
+        Assert.assertEquals("boot1", response.jsonPath().get("employees[0].name"));
+        Assert.assertEquals(16, response.jsonPath().getLong("employees[0].age"));
+        Assert.assertEquals("Male", response.jsonPath().get("employees[0].gender"));
+        Assert.assertEquals(4000, response.jsonPath().getLong("employees[0].salary"));
     }
 }
