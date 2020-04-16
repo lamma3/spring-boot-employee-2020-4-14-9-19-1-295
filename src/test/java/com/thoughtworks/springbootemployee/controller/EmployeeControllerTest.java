@@ -61,6 +61,10 @@ public class EmployeeControllerTest {
 
         Mockito.when(employeeRepository.findByGender("male"))
                 .thenReturn(employees);
+
+        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0);
+        Mockito.when(employeeRepository.save(Mockito.any()))
+                .thenReturn(newEmployee);
     }
 
     @Test

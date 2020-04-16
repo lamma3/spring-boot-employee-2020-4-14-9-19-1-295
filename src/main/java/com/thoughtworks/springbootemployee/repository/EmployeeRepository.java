@@ -38,8 +38,9 @@ public class EmployeeRepository {
                 .findFirst();
     }
 
-    public void save(Employee employee) {
+    public Employee save(Employee employee) {
         employees.add(employee);
+        return employee;
     }
 
     public void delete(Employee employee) {

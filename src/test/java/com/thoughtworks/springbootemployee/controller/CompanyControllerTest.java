@@ -61,6 +61,10 @@ public class CompanyControllerTest {
 
         Mockito.when(companyRepository.findById(1))
                 .thenReturn(Optional.of(company1));
+
+        Company newCompany = new Company(10, "Test", 0, new ArrayList<>());
+        Mockito.when(companyRepository.save(Mockito.any()))
+                .thenReturn(newCompany);
     }
 
     @Test

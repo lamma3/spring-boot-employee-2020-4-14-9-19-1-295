@@ -26,8 +26,7 @@ public class EmployeeService {
     }
 
     public Employee create(Employee employee) {
-        employeeRepository.save(employee);
-        return employee;
+        return employeeRepository.save(employee);
     }
 
     public void delete(Integer employeeId) {

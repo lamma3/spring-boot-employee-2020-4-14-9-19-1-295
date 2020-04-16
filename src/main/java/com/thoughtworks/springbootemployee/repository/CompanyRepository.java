@@ -44,7 +44,8 @@ public class CompanyRepository {
                 .findFirst();
     }
 
-    public void save(Company company) {
+    public Company save(Company company) {
         companies.add(company);
+        return company;
     }
 }
