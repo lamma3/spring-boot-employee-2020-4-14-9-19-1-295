@@ -22,10 +22,7 @@ public class CompanyController {
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public List<Company> getAll(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer pageSize
-    ) {
+    public List<Company> getAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
         return companyService.getAll(page, pageSize);
     }
 

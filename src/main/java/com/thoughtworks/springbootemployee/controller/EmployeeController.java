@@ -21,10 +21,7 @@ public class EmployeeController {
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public List<Employee> getPaginatedAll(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer pageSize
-    ) {
+    public List<Employee> getPaginatedAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
         return employeeService.getAll(page, pageSize);
     }
 
