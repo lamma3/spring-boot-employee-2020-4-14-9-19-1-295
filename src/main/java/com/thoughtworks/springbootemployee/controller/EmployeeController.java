@@ -40,8 +40,8 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void create(@RequestBody Employee employee) {
-        employeeService.create(employee);
+    public Employee create(@RequestBody Employee employee) {
+        return employeeService.create(employee);
     }
 
     @DeleteMapping("/{employeeId}")
@@ -50,7 +50,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    public void update(@PathVariable Integer employeeId, @RequestBody Employee employee) {
-        employeeService.update(employeeId, employee);
+    public Employee update(@PathVariable Integer employeeId, @RequestBody Employee employee) {
+        return employeeService.update(employeeId, employee);
     }
 }

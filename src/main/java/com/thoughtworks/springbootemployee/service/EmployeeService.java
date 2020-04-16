@@ -25,8 +25,9 @@ public class EmployeeService {
         return employeeRepository.findById(employeeId);
     }
 
-    public void create(Employee employee) {
+    public Employee create(Employee employee) {
         employeeRepository.add(employee);
+        return employee;
     }
 
     public void delete(Integer employeeId) {
@@ -34,7 +35,7 @@ public class EmployeeService {
         employeeRepository.remove(employee);
     }
 
-    public void update(Integer employeeId, Employee employeeUpdate) {
+    public Employee update(Integer employeeId, Employee employeeUpdate) {
         Employee employee = employeeRepository.findById(employeeId);
         if (employeeUpdate.getName() != null) {
             employee.setName(employeeUpdate.getName());
@@ -48,6 +49,7 @@ public class EmployeeService {
         if (employeeUpdate.getSalary() != null) {
             employee.setSalary(employeeUpdate.getSalary());
         }
+        return employee;
     }
 
     public List<Employee> getByGender(String gender) {
