@@ -146,4 +146,12 @@ public class CompanyControllerTest {
         Assert.assertEquals(0, company.getEmployeeNumber().longValue());
         Assert.assertEquals(0, company.getEmployees().size());
     }
+
+    @Test
+    public void should_return_200_when_delete() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .delete("/companies/1");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+    }
 }
