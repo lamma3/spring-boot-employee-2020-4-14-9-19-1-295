@@ -120,4 +120,27 @@ public class EmployeeControllerTest {
         Assert.assertEquals("Male", employee.getGender());
         Assert.assertEquals(0, employee.getSalary().longValue());
     }
+
+    @Test
+    public void should_return_correct_employee_when_create() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .body("{" +
+                        "\"id\": 10," +
+                        "\"name\": \"Test\"," +
+                        "\"age\": 19," +
+                        "\"gender\": \"Male\"," +
+                        "\"salary\": 0" +
+                        "}")
+                .post("/employees");
+
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
+
+        Employee employee = response.getBody().as(Employee.class);
+
+        Assert.assertEquals(10, employee.getId().longValue());
+        Assert.assertEquals("Test", employee.getName());
+        Assert.assertEquals(19, employee.getAge().longValue());
+        Assert.assertEquals("Male", employee.getGender());
+        Assert.assertEquals(0, employee.getSalary().longValue());
+    }
 }
