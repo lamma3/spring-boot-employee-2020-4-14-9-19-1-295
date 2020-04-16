@@ -1,8 +1,6 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.Employee;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.junit.Assert;
@@ -14,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -75,13 +70,6 @@ public class EmployeeControllerTest {
                 .get("/employees");
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        List<Employee> employees = response.getBody().as(new TypeRef<List<Employee>>() {
-            @Override
-            public Type getType() {
-                return super.getType();
-            }
-        });
 
         Assert.assertEquals(5, response.jsonPath().getList("$").size());
         Assert.assertEquals(0, response.jsonPath().getLong("[0].id"));
@@ -149,7 +137,5 @@ public class EmployeeControllerTest {
         Assert.assertEquals(19, response.jsonPath().getLong("age"));
         Assert.assertEquals("Male", response.jsonPath().get("gender"));
         Assert.assertEquals(0, response.jsonPath().getLong("salary"));
-
-
     }
 }
