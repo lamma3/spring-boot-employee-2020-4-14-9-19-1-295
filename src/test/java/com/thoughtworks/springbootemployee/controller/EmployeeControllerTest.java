@@ -81,4 +81,27 @@ public class EmployeeControllerTest {
         Assert.assertEquals("Male", employees.get(1).getGender());
         Assert.assertEquals(0, employees.get(1).getSalary().longValue());
     }
+
+    @Test
+    public void should_return_correct_employees_when_get_by_gender() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .queryParam("gender", "male")
+                .get("/employees");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        List<Employee> employees = response.getBody().as(new TypeRef<List<Employee>>() {
+            @Override
+            public Type getType() {
+                return super.getType();
+            }
+        });
+
+        Assert.assertEquals(5, employees.size());
+        Assert.assertEquals(0, employees.get(0).getId().longValue());
+        Assert.assertEquals("Xiaoming", employees.get(0).getName());
+        Assert.assertEquals(20, employees.get(0).getAge().longValue());
+        Assert.assertEquals("Male", employees.get(0).getGender());
+        Assert.assertEquals(0, employees.get(0).getSalary().longValue());
+    }
 }
