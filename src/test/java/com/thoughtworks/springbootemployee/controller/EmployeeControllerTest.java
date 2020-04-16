@@ -143,4 +143,12 @@ public class EmployeeControllerTest {
         Assert.assertEquals("Male", employee.getGender());
         Assert.assertEquals(0, employee.getSalary().longValue());
     }
+
+    @Test
+    public void should_return_200_when_delete() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .delete("/employees/1");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+    }
 }
