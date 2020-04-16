@@ -151,4 +151,23 @@ public class EmployeeControllerTest {
 
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
+
+    @Test
+    public void should_return_correct_employee_when_update() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .body("{" +
+                        "\"name\": \"New name\"" +
+                        "}")
+                .put("/employees/1");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        Employee employee = response.getBody().as(Employee.class);
+
+        Assert.assertEquals(1, employee.getId().longValue());
+        Assert.assertEquals("New name", employee.getName());
+        Assert.assertEquals(19, employee.getAge().longValue());
+        Assert.assertEquals("Male", employee.getGender());
+        Assert.assertEquals(0, employee.getSalary().longValue());
+    }
 }
