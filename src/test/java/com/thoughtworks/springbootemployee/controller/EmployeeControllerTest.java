@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -56,7 +57,7 @@ public class EmployeeControllerTest {
                 .thenReturn(pagedEmployees);
 
         Mockito.when(employeeRepository.findById(1))
-                .thenReturn(employee1);
+                .thenReturn(Optional.of(employee1));
 
         Mockito.when(employeeRepository.findByGender("male"))
                 .thenReturn(employees);

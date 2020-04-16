@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -59,7 +60,7 @@ public class CompanyControllerTest {
                 .thenReturn(pagedCompanies);
 
         Mockito.when(companyRepository.findById(1))
-                .thenReturn(company1);
+                .thenReturn(Optional.of(company1));
     }
 
     @Test

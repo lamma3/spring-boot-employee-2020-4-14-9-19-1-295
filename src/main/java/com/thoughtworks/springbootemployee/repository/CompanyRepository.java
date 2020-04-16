@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CompanyRepository {
@@ -37,11 +38,10 @@ public class CompanyRepository {
         return companies.subList(fromIndex, toIndex);
     }
 
-    public Company findById(Integer companyId) {
+    public Optional<Company> findById(Integer companyId) {
         return companies.stream()
                 .filter(company -> company.getId().equals(companyId))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     public void save(Company company) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -31,11 +32,10 @@ public class EmployeeRepository {
         return employees.subList(fromIndex, toIndex);
     }
 
-    public Employee findById(Integer employeeId) {
+    public Optional<Employee> findById(Integer employeeId) {
         return employees.stream()
                 .filter(employee -> employee.getId().equals(employeeId))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     public void save(Employee employee) {

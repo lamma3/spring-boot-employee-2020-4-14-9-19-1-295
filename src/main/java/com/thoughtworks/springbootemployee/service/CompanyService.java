@@ -24,7 +24,7 @@ public class CompanyService {
     }
 
     public Company get(Integer companyId) {
-        return companyRepository.findById(companyId);
+        return companyRepository.findById(companyId).orElse(null);
     }
 
     public Company create(Company company) {
@@ -33,12 +33,17 @@ public class CompanyService {
     }
 
     public void deleteEmployeesInCompany(Integer companyId) {
-        Company company = companyRepository.findById(companyId);
-        company.setEmployees(new ArrayList<>());
+        companyRepository.findById(companyId)
+                .ifPresent(company -> company.setEmployees(new ArrayList<>()));
     }
 
     public Company update(Integer companyId, Company companyUpdate) {
-        Company company = companyRepository.findById(companyId);
+        Company company = companyRepository.findById(companyId).orElse(null);
+
+        if (company == null) {
+            return null;
+        }
+
         if (companyUpdate.getCompanyName() != null) {
             company.setCompanyName(companyUpdate.getCompanyName());
         }
@@ -52,7 +57,10 @@ public class CompanyService {
     }
 
     public List<Employee> getEmployees(Integer companyId) {
-        Company company = companyRepository.findById(companyId);
+        Company company = companyRepository.findById(companyId).orElse(null);
+        if (company == null) {
+            return null;
+        }
         return company.getEmployees();
     }
 }

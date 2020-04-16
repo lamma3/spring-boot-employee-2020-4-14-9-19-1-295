@@ -22,7 +22,7 @@ public class EmployeeService {
     }
 
     public Employee get(Integer employeeId) {
-        return employeeRepository.findById(employeeId);
+        return employeeRepository.findById(employeeId).orElse(null);
     }
 
     public Employee create(Employee employee) {
@@ -31,12 +31,17 @@ public class EmployeeService {
     }
 
     public void delete(Integer employeeId) {
-        Employee employee = employeeRepository.findById(employeeId);
-        employeeRepository.delete(employee);
+        employeeRepository.findById(employeeId)
+                .ifPresent(employee -> employeeRepository.delete(employee));
     }
 
     public Employee update(Integer employeeId, Employee employeeUpdate) {
-        Employee employee = employeeRepository.findById(employeeId);
+        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+
+        if(employee == null) {
+            return null;
+        }
+
         if (employeeUpdate.getName() != null) {
             employee.setName(employeeUpdate.getName());
         }
