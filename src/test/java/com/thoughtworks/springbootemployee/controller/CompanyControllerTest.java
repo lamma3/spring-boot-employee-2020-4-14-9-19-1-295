@@ -1,6 +1,7 @@
 package com.thoughtworks.springbootemployee.controller;
 
 import com.thoughtworks.springbootemployee.model.Company;
+import com.thoughtworks.springbootemployee.model.Employee;
 import io.restassured.http.ContentType;
 import io.restassured.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -101,5 +102,27 @@ public class CompanyControllerTest {
         Assert.assertEquals(16, company.getEmployees().get(0).getAge().longValue());
         Assert.assertEquals("Male", company.getEmployees().get(0).getGender());
         Assert.assertEquals(4000, company.getEmployees().get(0).getSalary().longValue());
+    }
+
+    @Test
+    public void should_return_employees_when_get_company_employees() {
+        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
+                .get("/companies/1/employees");
+
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+        List<Employee> employees = response.getBody().as(new TypeRef<List<Employee>>() {
+            @Override
+            public Type getType() {
+                return super.getType();
+            }
+        });
+
+        Assert.assertEquals(2, employees.size());
+        Assert.assertEquals(13, employees.get(0).getId().longValue());
+        Assert.assertEquals("boot1", employees.get(0).getName());
+        Assert.assertEquals(16, employees.get(0).getAge().longValue());
+        Assert.assertEquals("Male", employees.get(0).getGender());
+        Assert.assertEquals(4000, employees.get(0).getSalary().longValue());
     }
 }
