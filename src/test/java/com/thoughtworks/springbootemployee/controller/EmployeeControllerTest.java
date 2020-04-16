@@ -1,5 +1,7 @@
 package com.thoughtworks.springbootemployee.controller;
 
+import com.thoughtworks.springbootemployee.model.Employee;
+import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
@@ -7,23 +9,57 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class EmployeeControllerTest {
 
     @Autowired
     private EmployeeController employeeController;
 
+    @MockBean
+    private EmployeeRepository employeeRepository;
+
     @Before
     public void setUp() {
         RestAssuredMockMvc.standaloneSetup(employeeController);
+
+        Employee employee0 = new Employee(0, "Xiaoming", 20, "Male", 0);
+        Employee employee1 = new Employee(1, "Xiaohong", 19, "Male", 0);
+        Employee employee2 = new Employee(2, "Xiaozhi", 15, "Male", 0);
+        Employee employee3 = new Employee(3, "Xiaogang", 16, "Male", 0);
+        Employee employee4 = new Employee(4, "Xiaoxia", 15, "Male", 0);
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee0);
+        employees.add(employee1);
+        employees.add(employee2);
+        employees.add(employee3);
+        employees.add(employee4);
+
+        Mockito.when(employeeRepository.findAll())
+                .thenReturn(employees);
+
+        List<Employee> pagedEmployees = new ArrayList<>();
+        pagedEmployees.add(employee3);
+        pagedEmployees.add(employee4);
+        Mockito.when(employeeRepository.findAll(2, 3))
+                .thenReturn(pagedEmployees);
+
+        Mockito.when(employeeRepository.findById(1))
+                .thenReturn(employee1);
+
+        Mockito.when(employeeRepository.findByGender("male"))
+                .thenReturn(employees);
     }
 
     @Test
@@ -34,6 +70,7 @@ public class EmployeeControllerTest {
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
         Assert.assertEquals(5, response.jsonPath().getList("$").size());
+
         Assert.assertEquals(0, response.jsonPath().getLong("[0].id"));
         Assert.assertEquals("Xiaoming", response.jsonPath().get("[0].name"));
         Assert.assertEquals(20, response.jsonPath().getLong("[0].age"));
@@ -51,11 +88,13 @@ public class EmployeeControllerTest {
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
         Assert.assertEquals(2, response.jsonPath().getList("$").size());
+
         Assert.assertEquals(3, response.jsonPath().getLong("[0].id"));
         Assert.assertEquals("Xiaogang", response.jsonPath().get("[0].name"));
         Assert.assertEquals(16, response.jsonPath().getLong("[0].age"));
         Assert.assertEquals("Male", response.jsonPath().get("[0].gender"));
         Assert.assertEquals(0, response.jsonPath().getLong("[0].salary"));
+
         Assert.assertEquals(4, response.jsonPath().getLong("[1].id"));
         Assert.assertEquals("Xiaoxia", response.jsonPath().get("[1].name"));
         Assert.assertEquals(15, response.jsonPath().getLong("[1].age"));
@@ -72,6 +111,7 @@ public class EmployeeControllerTest {
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
         Assert.assertEquals(5, response.jsonPath().getList("$").size());
+
         Assert.assertEquals(0, response.jsonPath().getLong("[0].id"));
         Assert.assertEquals("Xiaoming", response.jsonPath().get("[0].name"));
         Assert.assertEquals(20, response.jsonPath().getLong("[0].age"));
