@@ -36,11 +36,11 @@ public class EmployeeControllerTest {
     public void setUp() {
         RestAssuredMockMvc.standaloneSetup(employeeController);
 
-        Employee employee0 = new Employee(0, "Xiaoming", 20, "Male", 0);
-        Employee employee1 = new Employee(1, "Xiaohong", 19, "Male", 0);
-        Employee employee2 = new Employee(2, "Xiaozhi", 15, "Male", 0);
-        Employee employee3 = new Employee(3, "Xiaogang", 16, "Male", 0);
-        Employee employee4 = new Employee(4, "Xiaoxia", 15, "Male", 0);
+        Employee employee0 = new Employee(0, "Xiaoming", 20, "Male", 0, 0);
+        Employee employee1 = new Employee(1, "Xiaohong", 19, "Male", 0, 0);
+        Employee employee2 = new Employee(2, "Xiaozhi", 15, "Male", 0, 0);
+        Employee employee3 = new Employee(3, "Xiaogang", 16, "Male", 0, 1);
+        Employee employee4 = new Employee(4, "Xiaoxia", 15, "Male", 0, 1);
 
         List<Employee> employees = new ArrayList<>();
         employees.add(employee0);
@@ -135,7 +135,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_create() {
-        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0);
+        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0, 0);
         Mockito.when(employeeRepository.save(Mockito.any()))
                 .thenReturn(newEmployee);
 
@@ -168,7 +168,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_update() {
-        Employee newEmployee = new Employee(1, "New name", 19, "Male", 0);
+        Employee newEmployee = new Employee(1, "New name", 19, "Male", 0, 0);
         Mockito.when(employeeRepository.save(Mockito.any()))
                 .thenReturn(newEmployee);
 

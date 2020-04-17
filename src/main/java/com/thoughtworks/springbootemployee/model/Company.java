@@ -21,7 +21,6 @@ public class Company {
     private String companyName;
     private Integer employeeNumber;
 
-    @OneToMany
-    @JoinColumn(name = "company_id")
+    @OneToMany(mappedBy = "companyId", fetch = FetchType.LAZY)
     private List<Employee> employees;
 }
