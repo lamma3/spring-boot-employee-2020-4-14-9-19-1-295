@@ -3,40 +3,43 @@ package com.thoughtworks.springbootemployee.controller;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
-import io.restassured.http.ContentType;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import io.restassured.module.mockmvc.response.MockMvcResponse;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
+@AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 public class CompanyControllerTest {
 
     @Autowired
-    private CompanyController companyController;
+    private MockMvc mvc;
 
     @MockBean
     private CompanyRepository companyRepository;
 
     @Before
     public void setUp() {
-        RestAssuredMockMvc.standaloneSetup(companyController);
-
         List<Employee> employeesInSpring = new ArrayList<>();
         employeesInSpring.add(new Employee(10, "spring1", 20, "Male", 1000, 0));
         employeesInSpring.add(new Employee(11, "spring2", 19, "Male", 2000, 0));
@@ -64,134 +67,117 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void should_return_all_companies_when_get_all() {
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .get("/companies");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        Assert.assertEquals(2, response.jsonPath().getList("$").size());
-
-        Assert.assertEquals(0, response.jsonPath().getLong("[0].id"));
-        Assert.assertEquals("spring", response.jsonPath().get("[0].companyName"));
-        Assert.assertEquals(3, response.jsonPath().getLong("[0].employeeNumber"));
-        Assert.assertEquals(3, response.jsonPath().getList("[0].employees").size());
-
-        Assert.assertEquals(10, response.jsonPath().getLong("[0].employees[0].id"));
-        Assert.assertEquals("spring1", response.jsonPath().get("[0].employees[0].name"));
-        Assert.assertEquals(20, response.jsonPath().getLong("[0].employees[0].age"));
-        Assert.assertEquals("Male", response.jsonPath().get("[0].employees[0].gender"));
-        Assert.assertEquals(1000, response.jsonPath().getLong("[0].employees[0].salary"));
+    public void should_return_all_companies_when_get_all() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/companies"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(0)))
+                .andExpect(jsonPath("$[0].companyName", is("spring")))
+                .andExpect(jsonPath("$[0].employeeNumber", is(3)))
+                .andExpect(jsonPath("$[0].employees", hasSize(3)))
+                .andExpect(jsonPath("$[0].employees[0].id", is(10)))
+                .andExpect(jsonPath("$[0].employees[0].name", is("spring1")))
+                .andExpect(jsonPath("$[0].employees[0].age", is(20)))
+                .andExpect(jsonPath("$[0].employees[0].gender", is("Male")))
+                .andExpect(jsonPath("$[0].employees[0].salary", is(1000)));
     }
 
     @Test
-    public void should_return_correct_companies_when_get_all_with_page() {
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .queryParam("page", 2)
-                .queryParam("pageSize", 1)
-                .get("/companies");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        Assert.assertEquals(1, response.jsonPath().getList("$").size());
-
-        Assert.assertEquals(1, response.jsonPath().getLong("[0].id"));
-        Assert.assertEquals("boot", response.jsonPath().get("[0].companyName"));
-        Assert.assertEquals(2, response.jsonPath().getLong("[0].employeeNumber"));
-        Assert.assertEquals(2, response.jsonPath().getList("[0].employees").size());
-
-        Assert.assertEquals(13, response.jsonPath().getLong("[0].employees[0].id"));
-        Assert.assertEquals("boot1", response.jsonPath().get("[0].employees[0].name"));
-        Assert.assertEquals(16, response.jsonPath().getLong("[0].employees[0].age"));
-        Assert.assertEquals("Male", response.jsonPath().get("[0].employees[0].gender"));
-        Assert.assertEquals(4000, response.jsonPath().getLong("[0].employees[0].salary"));
+    public void should_return_correct_companies_when_get_all_with_page() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/companies")
+                .queryParam("page", "2")
+                .queryParam("pageSize", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].companyName", is("boot")))
+                .andExpect(jsonPath("$[0].employeeNumber", is(2)))
+                .andExpect(jsonPath("$[0].employees", hasSize(2)))
+                .andExpect(jsonPath("$[0].employees[0].id", is(13)))
+                .andExpect(jsonPath("$[0].employees[0].name", is("boot1")))
+                .andExpect(jsonPath("$[0].employees[0].age", is(16)))
+                .andExpect(jsonPath("$[0].employees[0].gender", is("Male")))
+                .andExpect(jsonPath("$[0].employees[0].salary", is(4000)));
     }
 
     @Test
-    public void should_return_company_1_when_get_1() {
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .get("/companies/1");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        Assert.assertEquals(1, response.jsonPath().getLong("id"));
-        Assert.assertEquals("boot", response.jsonPath().get("companyName"));
-        Assert.assertEquals(2, response.jsonPath().getLong("employeeNumber"));
-        Assert.assertEquals(2, response.jsonPath().getList("employees").size());
-
-        Assert.assertEquals(13, response.jsonPath().getLong("employees[0].id"));
-        Assert.assertEquals("boot1", response.jsonPath().get("employees[0].name"));
-        Assert.assertEquals(16, response.jsonPath().getLong("employees[0].age"));
-        Assert.assertEquals("Male", response.jsonPath().get("employees[0].gender"));
-        Assert.assertEquals(4000, response.jsonPath().getLong("employees[0].salary"));
+    public void should_return_company_1_when_get_1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/companies/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.companyName", is("boot")))
+                .andExpect(jsonPath("$.employeeNumber", is(2)))
+                .andExpect(jsonPath("$.employees", hasSize(2)))
+                .andExpect(jsonPath("$.employees[0].id", is(13)))
+                .andExpect(jsonPath("$.employees[0].name", is("boot1")))
+                .andExpect(jsonPath("$.employees[0].age", is(16)))
+                .andExpect(jsonPath("$.employees[0].gender", is("Male")))
+                .andExpect(jsonPath("$.employees[0].salary", is(4000)));
     }
 
     @Test
-    public void should_return_employees_when_get_company_employees() {
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .get("/companies/1/employees");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        Assert.assertEquals(2, response.jsonPath().getList("$").size());
-
-        Assert.assertEquals(13, response.jsonPath().getLong("[0].id"));
-        Assert.assertEquals("boot1", response.jsonPath().get("[0].name"));
-        Assert.assertEquals(16, response.jsonPath().getLong("[0].age"));
-        Assert.assertEquals("Male", response.jsonPath().get("[0].gender"));
-        Assert.assertEquals(4000, response.jsonPath().getLong("[0].salary"));
+    public void should_return_employees_when_get_company_employees() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/companies/1/employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(13)))
+                .andExpect(jsonPath("$[0].name", is("boot1")))
+                .andExpect(jsonPath("$[0].age", is(16)))
+                .andExpect(jsonPath("$[0].gender", is("Male")))
+                .andExpect(jsonPath("$[0].salary", is(4000)));
     }
 
     @Test
-    public void should_return_correct_company_when_create() {
+    public void should_return_correct_company_when_create() throws Exception {
         Company newCompany = new Company(10, "Test", 0, new ArrayList<>());
         Mockito.when(companyRepository.save(Mockito.any()))
                 .thenReturn(newCompany);
 
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .body("{" +
+        mvc.perform(MockMvcRequestBuilders
+                .post("/companies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{" +
                         "\"id\": 10," +
                         "\"companyName\": \"Test\"," +
                         "\"employeeNumber\": 0," +
                         "\"employees\": []" +
-                        "}")
-                .post("/companies");
-
-        Assert.assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
-
-        Assert.assertEquals(10, response.jsonPath().getLong("id"));
-        Assert.assertEquals("Test", response.jsonPath().get("companyName"));
-        Assert.assertEquals(0, response.jsonPath().getLong("employeeNumber"));
-        Assert.assertEquals(0, response.jsonPath().getList("employees").size());
+                        "}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(10)))
+                .andExpect(jsonPath("$.companyName", is("Test")))
+                .andExpect(jsonPath("$.employeeNumber", is(0)))
+                .andExpect(jsonPath("$.employees", is(new ArrayList<>())));
     }
 
     @Test
-    public void should_return_200_when_delete() {
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .delete("/companies/1");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+    public void should_return_200_when_delete() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .delete("/companies/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void should_return_correct_company_when_update() {
+    public void should_return_correct_company_when_update() throws Exception {
         Company updatedCompany = new Company(1, "New name", 0, new ArrayList<>());
         Mockito.when(companyRepository.save(Mockito.any()))
                 .thenReturn(updatedCompany);
 
-        MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
-                .body("{" +
+        mvc.perform(MockMvcRequestBuilders
+                .put("/companies/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{" +
                         "\"companyName\": \"New name\"," +
                         "\"employeeNumber\": 0," +
                         "\"employees\": []" +
-                        "}")
-                .put("/companies/1");
-
-        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-
-        Assert.assertEquals(1, response.jsonPath().getLong("id"));
-        Assert.assertEquals("New name", response.jsonPath().get("companyName"));
-        Assert.assertEquals(0, response.jsonPath().getLong("employeeNumber"));
-        Assert.assertEquals(0, response.jsonPath().getList("employees").size());
+                        "}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.companyName", is("New name")))
+                .andExpect(jsonPath("$.employeeNumber", is(0)))
+                .andExpect(jsonPath("$.employees", is(new ArrayList<>())));
     }
 }
