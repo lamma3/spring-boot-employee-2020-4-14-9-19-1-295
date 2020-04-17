@@ -16,4 +16,8 @@ public class ParkingBoyService {
     public List<ParkingBoy> getAll() {
         return parkingBoyRepository.findAll();
     }
+
+    public ParkingBoy create(ParkingBoy parkingBoy) {
+        return parkingBoyRepository.save(parkingBoy);
+    }
 }
