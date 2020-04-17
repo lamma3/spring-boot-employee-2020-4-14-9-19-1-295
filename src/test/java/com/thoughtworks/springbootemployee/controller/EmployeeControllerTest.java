@@ -2,9 +2,11 @@ package com.thoughtworks.springbootemployee.controller;
 
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -126,7 +128,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_create() throws Exception {
-        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0, 0);
+        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0, 1);
         Mockito.when(employeeRepository.save(Mockito.any()))
                 .thenReturn(newEmployee);
 
@@ -134,18 +136,24 @@ public class EmployeeControllerTest {
                 .post("/employees")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{" +
-                        "\"id\": 10," +
                         "\"name\": \"Test\"," +
                         "\"age\": 19," +
                         "\"gender\": \"Male\"," +
-                        "\"salary\": 0" +
+                        "\"salary\": 0," +
+                        "\"companyId\": 1" +
                         "}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id", is(10)))
                 .andExpect(jsonPath("name", is("Test")))
                 .andExpect(jsonPath("age", is(19)))
                 .andExpect(jsonPath("gender", is("Male")))
-                .andExpect(jsonPath("salary", is(0)));
+                .andExpect(jsonPath("salary", is(0)))
+                .andExpect(jsonPath("companyId", is(1)));
+
+        Employee preCreateEmployee = new Employee(null, "Test", 19, "Male", 0, 1);
+        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
+        Mockito.verify(employeeRepository).save(argumentCaptor.capture());
+        Assert.assertEquals(preCreateEmployee, argumentCaptor.getValue());
     }
 
     @Test
@@ -157,9 +165,9 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_update() throws Exception {
-        Employee newEmployee = new Employee(1, "New name", 19, "Male", 0, 0);
+        Employee updatedEmployee = new Employee(1, "New name", 19, "Male", 0, 0);
         Mockito.when(employeeRepository.save(Mockito.any()))
-                .thenReturn(newEmployee);
+                .thenReturn(updatedEmployee);
 
         mvc.perform(MockMvcRequestBuilders
                 .put("/employees/1")
@@ -173,5 +181,9 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("age", is(19)))
                 .andExpect(jsonPath("gender", is("Male")))
                 .andExpect(jsonPath("salary", is(0)));
+
+        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
+        Mockito.verify(employeeRepository).save(argumentCaptor.capture());
+        Assert.assertEquals(updatedEmployee, argumentCaptor.getValue());
     }
 }

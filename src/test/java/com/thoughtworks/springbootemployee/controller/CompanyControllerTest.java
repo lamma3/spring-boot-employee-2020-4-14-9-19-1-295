@@ -3,9 +3,11 @@ package com.thoughtworks.springbootemployee.controller;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -141,7 +143,6 @@ public class CompanyControllerTest {
                 .post("/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{" +
-                        "\"id\": 10," +
                         "\"companyName\": \"Test\"," +
                         "\"employeeNumber\": 0," +
                         "\"employees\": []" +
@@ -151,6 +152,11 @@ public class CompanyControllerTest {
                 .andExpect(jsonPath("$.companyName", is("Test")))
                 .andExpect(jsonPath("$.employeeNumber", is(0)))
                 .andExpect(jsonPath("$.employees", is(new ArrayList<>())));
+
+        Company preCreateCompany = new Company(null, "Test", 0, new ArrayList<>());
+        ArgumentCaptor<Company> argumentCaptor = ArgumentCaptor.forClass(Company.class);
+        Mockito.verify(companyRepository).save(argumentCaptor.capture());
+        Assert.assertEquals(preCreateCompany, argumentCaptor.getValue());
     }
 
     @Test
@@ -179,5 +185,9 @@ public class CompanyControllerTest {
                 .andExpect(jsonPath("$.companyName", is("New name")))
                 .andExpect(jsonPath("$.employeeNumber", is(0)))
                 .andExpect(jsonPath("$.employees", is(new ArrayList<>())));
+
+        ArgumentCaptor<Company> argumentCaptor = ArgumentCaptor.forClass(Company.class);
+        Mockito.verify(companyRepository).save(argumentCaptor.capture());
+        Assert.assertEquals(updatedCompany, argumentCaptor.getValue());
     }
 }
