@@ -14,6 +14,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -54,17 +56,11 @@ public class CompanyControllerTest {
         Mockito.when(companyRepository.findAll())
                 .thenReturn(companies);
 
-        List<Company> pagedCompanies = new ArrayList<>();
-        pagedCompanies.add(company1);
-        Mockito.when(companyRepository.findAll(2, 1))
-                .thenReturn(pagedCompanies);
+        Mockito.when(companyRepository.findAll(Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(companies.subList(1, 2)));
 
         Mockito.when(companyRepository.findById(1))
                 .thenReturn(Optional.of(company1));
-
-        Company newCompany = new Company(10, "Test", 0, new ArrayList<>());
-        Mockito.when(companyRepository.save(Mockito.any()))
-                .thenReturn(newCompany);
     }
 
     @Test
@@ -148,6 +144,10 @@ public class CompanyControllerTest {
 
     @Test
     public void should_return_correct_company_when_create() {
+        Company newCompany = new Company(10, "Test", 0, new ArrayList<>());
+        Mockito.when(companyRepository.save(Mockito.any()))
+                .thenReturn(newCompany);
+
         MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
                 .body("{" +
                         "\"id\": 10," +
@@ -175,9 +175,15 @@ public class CompanyControllerTest {
 
     @Test
     public void should_return_correct_company_when_update() {
+        Company updatedCompany = new Company(1, "New name", 0, new ArrayList<>());
+        Mockito.when(companyRepository.save(Mockito.any()))
+                .thenReturn(updatedCompany);
+
         MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
                 .body("{" +
-                        "\"companyName\": \"New name\"" +
+                        "\"companyName\": \"New name\"," +
+                        "\"employeeNumber\": 0," +
+                        "\"employees\": []" +
                         "}")
                 .put("/companies/1");
 
@@ -185,13 +191,7 @@ public class CompanyControllerTest {
 
         Assert.assertEquals(1, response.jsonPath().getLong("id"));
         Assert.assertEquals("New name", response.jsonPath().get("companyName"));
-        Assert.assertEquals(2, response.jsonPath().getLong("employeeNumber"));
-        Assert.assertEquals(2, response.jsonPath().getList("employees").size());
-
-        Assert.assertEquals(13, response.jsonPath().getLong("employees[0].id"));
-        Assert.assertEquals("boot1", response.jsonPath().get("employees[0].name"));
-        Assert.assertEquals(16, response.jsonPath().getLong("employees[0].age"));
-        Assert.assertEquals("Male", response.jsonPath().get("employees[0].gender"));
-        Assert.assertEquals(4000, response.jsonPath().getLong("employees[0].salary"));
+        Assert.assertEquals(0, response.jsonPath().getLong("employeeNumber"));
+        Assert.assertEquals(0, response.jsonPath().getList("employees").size());
     }
 }

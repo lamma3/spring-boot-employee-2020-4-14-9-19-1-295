@@ -4,6 +4,7 @@ import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CompanyService {
     }
 
     public List<Company> getAll(Integer page, Integer pageSize) {
-        return companyRepository.findAll(page, pageSize);
+        return companyRepository.findAll(PageRequest.of(page, pageSize)).getContent();
     }
 
     public Company get(Integer companyId) {
@@ -52,7 +53,7 @@ public class CompanyService {
         if (companyUpdate.getEmployees() != null) {
             company.setEmployees(companyUpdate.getEmployees());
         }
-        return company;
+        return companyRepository.save(company);
     }
 
     public List<Employee> getEmployees(Integer companyId) {

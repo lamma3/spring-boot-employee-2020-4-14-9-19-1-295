@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,21 +52,14 @@ public class EmployeeControllerTest {
         Mockito.when(employeeRepository.findAll())
                 .thenReturn(employees);
 
-        List<Employee> pagedEmployees = new ArrayList<>();
-        pagedEmployees.add(employee3);
-        pagedEmployees.add(employee4);
-        Mockito.when(employeeRepository.findAll(2, 3))
-                .thenReturn(pagedEmployees);
+        Mockito.when(employeeRepository.findAll(Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(employees.subList(3, 5)));
 
         Mockito.when(employeeRepository.findById(1))
                 .thenReturn(Optional.of(employee1));
 
-        Mockito.when(employeeRepository.findByGender("male"))
+        Mockito.when(employeeRepository.findAllByGenderIgnoreCase("male"))
                 .thenReturn(employees);
-
-        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0);
-        Mockito.when(employeeRepository.save(Mockito.any()))
-                .thenReturn(newEmployee);
     }
 
     @Test
@@ -140,6 +135,10 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_create() {
+        Employee newEmployee = new Employee(10, "Test", 19, "Male", 0);
+        Mockito.when(employeeRepository.save(Mockito.any()))
+                .thenReturn(newEmployee);
+
         MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
                 .body("{" +
                         "\"id\": 10," +
@@ -169,6 +168,10 @@ public class EmployeeControllerTest {
 
     @Test
     public void should_return_correct_employee_when_update() {
+        Employee newEmployee = new Employee(1, "New name", 19, "Male", 0);
+        Mockito.when(employeeRepository.save(Mockito.any()))
+                .thenReturn(newEmployee);
+
         MockMvcResponse response = RestAssuredMockMvc.given().contentType(ContentType.JSON)
                 .body("{" +
                         "\"name\": \"New name\"" +
