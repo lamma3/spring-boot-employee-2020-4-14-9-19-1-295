@@ -15,8 +15,9 @@ public class ParkingBoy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nikeName;
+    private Integer employeeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @OneToOne
+    @JoinColumn(name = "employeeId", updatable = false, insertable = false)
     private Employee employee;
 }
