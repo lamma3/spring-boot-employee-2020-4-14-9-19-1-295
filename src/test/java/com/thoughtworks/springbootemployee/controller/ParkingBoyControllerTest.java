@@ -3,11 +3,9 @@ package com.thoughtworks.springbootemployee.controller;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.model.ParkingBoy;
 import com.thoughtworks.springbootemployee.repository.ParkingBoyRepository;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -83,8 +81,6 @@ public class ParkingBoyControllerTest {
                 .andExpect(jsonPath("$.employeeId", is(5)));
 
         ParkingBoy preCreateParkingBoy = new ParkingBoy(null, "Test", 5, null);
-        ArgumentCaptor<ParkingBoy> argumentCaptor = ArgumentCaptor.forClass(ParkingBoy.class);
-        Mockito.verify(parkingBoyRepository).save(argumentCaptor.capture());
-        Assert.assertEquals(preCreateParkingBoy, argumentCaptor.getValue());
+        Mockito.verify(parkingBoyRepository, Mockito.times(1)).save(preCreateParkingBoy);
     }
 }

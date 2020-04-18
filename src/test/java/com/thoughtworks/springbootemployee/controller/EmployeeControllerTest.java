@@ -2,11 +2,9 @@ package com.thoughtworks.springbootemployee.controller;
 
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -151,9 +149,7 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("companyId", is(1)));
 
         Employee preCreateEmployee = new Employee(null, "Test", 19, "Male", 0, 1);
-        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
-        Mockito.verify(employeeRepository).save(argumentCaptor.capture());
-        Assert.assertEquals(preCreateEmployee, argumentCaptor.getValue());
+        Mockito.verify(employeeRepository, Mockito.times(1)).save(preCreateEmployee);
     }
 
     @Test
@@ -182,8 +178,6 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("gender", is("Male")))
                 .andExpect(jsonPath("salary", is(0)));
 
-        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
-        Mockito.verify(employeeRepository).save(argumentCaptor.capture());
-        Assert.assertEquals(updatedEmployee, argumentCaptor.getValue());
+        Mockito.verify(employeeRepository, Mockito.times(1)).save(updatedEmployee);
     }
 }
