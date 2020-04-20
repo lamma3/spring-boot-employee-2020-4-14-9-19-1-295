@@ -19,16 +19,19 @@ public class EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
-    public List<Employee> getAll() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponse> getAll() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employeeMapper.employeeListToEmployeeResponseList(employees);
     }
 
-    public List<Employee> getAll(Integer page, Integer pageSize) {
-        return employeeRepository.findAll(PageRequest.of(page, pageSize)).getContent();
+    public List<EmployeeResponse> getAll(Integer page, Integer pageSize) {
+        List<Employee> employees = employeeRepository.findAll(PageRequest.of(page, pageSize)).getContent();
+        return employeeMapper.employeeListToEmployeeResponseList(employees);
     }
 
-    public Employee get(Integer employeeId) {
-        return employeeRepository.findById(employeeId).orElse(null);
+    public EmployeeResponse get(Integer employeeId) {
+        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+        return employeeMapper.employeeToEmployeeResponse(employee);
     }
 
     public EmployeeResponse create(EmployeeRequest employeeRequest) {
@@ -42,7 +45,8 @@ public class EmployeeService {
         employeeRepository.deleteById(employeeId);
     }
 
-    public Employee update(Integer employeeId, Employee employeeUpdate) {
+    public EmployeeResponse update(Integer employeeId, EmployeeRequest employeeRequest) {
+        Employee employeeUpdate = employeeMapper.employeeRequestToEmployee(employeeRequest);
         Employee employee = employeeRepository.findById(employeeId).orElse(null);
 
         if(employee == null) {
@@ -61,10 +65,12 @@ public class EmployeeService {
         if (employeeUpdate.getSalary() != null) {
             employee.setSalary(employeeUpdate.getSalary());
         }
-        return employeeRepository.save(employee);
+        Employee updatedEmployee = employeeRepository.save(employee);
+        return employeeMapper.employeeToEmployeeResponse(updatedEmployee);
     }
 
-    public List<Employee> getByGender(String gender) {
-        return employeeRepository.findAllByGenderIgnoreCase(gender);
+    public List<EmployeeResponse> getByGender(String gender) {
+        List<Employee> employees = employeeRepository.findAllByGenderIgnoreCase(gender);
+        return employeeMapper.employeeListToEmployeeResponseList(employees);
     }
 }

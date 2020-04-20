@@ -1,6 +1,5 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.db.Employee;
 import com.thoughtworks.springbootemployee.model.request.EmployeeRequest;
 import com.thoughtworks.springbootemployee.model.response.EmployeeResponse;
 import com.thoughtworks.springbootemployee.service.EmployeeService;
@@ -18,22 +17,22 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping
-    public List<Employee> getAll() {
+    public List<EmployeeResponse> getAll() {
         return employeeService.getAll();
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public List<Employee> getPaginatedAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
+    public List<EmployeeResponse> getPaginatedAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
         return employeeService.getAll(page, pageSize);
     }
 
     @GetMapping(params = "gender")
-    public List<Employee> getByGender(@RequestParam String gender) {
+    public List<EmployeeResponse> getByGender(@RequestParam String gender) {
         return employeeService.getByGender(gender);
     }
 
     @GetMapping("/{employeeId}")
-    public Employee get(@PathVariable Integer employeeId) {
+    public EmployeeResponse get(@PathVariable Integer employeeId) {
         return employeeService.get(employeeId);
     }
 
@@ -49,7 +48,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    public Employee update(@PathVariable Integer employeeId, @RequestBody Employee employee) {
+    public EmployeeResponse update(@PathVariable Integer employeeId, @RequestBody EmployeeRequest employee) {
         return employeeService.update(employeeId, employee);
     }
 }
