@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface EmployeeMapper {
     Employee employeeRequestToEmployee(EmployeeRequest employeeRequest);
     EmployeeResponse employeeToEmployeeResponse(Employee employee);

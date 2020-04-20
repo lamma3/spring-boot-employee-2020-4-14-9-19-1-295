@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface CompanyMapper {
     Company companyRequestToCompany(CompanyRequest companyRequest);
     CompanyResponse companyToCompanyResponse(Company company);
