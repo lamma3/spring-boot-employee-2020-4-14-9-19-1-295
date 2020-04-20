@@ -1,7 +1,8 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.db.Company;
-import com.thoughtworks.springbootemployee.model.db.Employee;
+import com.thoughtworks.springbootemployee.model.request.CompanyRequest;
+import com.thoughtworks.springbootemployee.model.response.CompanyResponse;
+import com.thoughtworks.springbootemployee.model.response.EmployeeResponse;
 import com.thoughtworks.springbootemployee.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,28 +18,28 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping
-    public List<Company> getAll() {
+    public List<CompanyResponse> getAll() {
         return companyService.getAll();
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public List<Company> getAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
+    public List<CompanyResponse> getAll(@RequestParam Integer page, @RequestParam Integer pageSize) {
         return companyService.getAll(page, pageSize);
     }
 
     @GetMapping("/{companyId}")
-    public Company get(@PathVariable Integer companyId) {
+    public CompanyResponse get(@PathVariable Integer companyId) {
         return companyService.get(companyId);
     }
 
     @GetMapping("/{companyId}/employees")
-    public List<Employee> getEmployees(@PathVariable Integer companyId) {
+    public List<EmployeeResponse> getEmployees(@PathVariable Integer companyId) {
         return companyService.getEmployees(companyId);
     }
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Company create(@RequestBody Company company) {
+    public CompanyResponse create(@RequestBody CompanyRequest company) {
         return companyService.create(company);
     }
 
@@ -48,7 +49,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}")
-    public Company update(@PathVariable Integer companyId, @RequestBody Company company) {
+    public CompanyResponse update(@PathVariable Integer companyId, @RequestBody CompanyRequest company) {
         return companyService.update(companyId, company);
     }
 }
