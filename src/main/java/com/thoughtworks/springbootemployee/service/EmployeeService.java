@@ -1,6 +1,9 @@
 package com.thoughtworks.springbootemployee.service;
 
-import com.thoughtworks.springbootemployee.model.Employee;
+import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
+import com.thoughtworks.springbootemployee.model.db.Employee;
+import com.thoughtworks.springbootemployee.model.request.EmployeeRequest;
+import com.thoughtworks.springbootemployee.model.response.EmployeeResponse;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +16,8 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
     public List<Employee> getAll() {
         return employeeRepository.findAll();
@@ -26,8 +31,11 @@ public class EmployeeService {
         return employeeRepository.findById(employeeId).orElse(null);
     }
 
-    public Employee create(Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeResponse create(EmployeeRequest employeeRequest) {
+        Employee employee = employeeMapper.employeeRequestToEmployee(employeeRequest);
+        System.out.println(employee);
+        Employee createdEmployee = employeeRepository.save(employee);
+        return employeeMapper.employeeToEmployeeResponse(createdEmployee);
     }
 
     public void delete(Integer employeeId) {

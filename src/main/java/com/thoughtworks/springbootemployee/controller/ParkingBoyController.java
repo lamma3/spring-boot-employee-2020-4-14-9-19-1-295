@@ -1,6 +1,6 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.ParkingBoy;
+import com.thoughtworks.springbootemployee.model.db.ParkingBoy;
 import com.thoughtworks.springbootemployee.service.ParkingBoyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

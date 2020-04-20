@@ -1,7 +1,7 @@
 package com.thoughtworks.springbootemployee.controller;
 
-import com.thoughtworks.springbootemployee.model.Employee;
-import com.thoughtworks.springbootemployee.model.ParkingBoy;
+import com.thoughtworks.springbootemployee.model.db.Employee;
+import com.thoughtworks.springbootemployee.model.db.ParkingBoy;
 import com.thoughtworks.springbootemployee.repository.ParkingBoyRepository;
 import org.junit.Before;
 import org.junit.Test;
